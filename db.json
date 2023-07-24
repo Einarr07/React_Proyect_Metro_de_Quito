@@ -1,0 +1,30 @@
+{
+  "posts": [
+    {
+      "id": 1,
+      "title": "json-server",
+      "author": "typicode"
+    }
+  ],
+  "comments": [
+    {
+      "id": 1,
+      "body": "some comment",
+      "postId": 1
+    }
+  ],
+  "profile": {
+    "name": "typicode"
+  },
+  "metro": [
+    {
+      "nombre": "Parque",
+      "sector": "Ejido",
+      "salida": "Norte",
+      "llegada": "Sur",
+      "maquinista": "Juan",
+      "detalles": "Ruta1",
+      "id": "898d18bd-9bce-417b-9c12-7ed26078bf46"
+    }
+  ]
+}
