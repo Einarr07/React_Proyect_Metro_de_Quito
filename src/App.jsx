@@ -36,8 +36,6 @@ function App() {
           </div>
         </div>
         
-        
-        
         <div className='bg-slate-50 w-full m-3 p-5 shadow-lg rounded-lg lg:w-1/2 dark:border-2 border-sky-900'>
           <div className="flex items-center space-x-10">
             <hr className="w-80 border border-gray-400" />
