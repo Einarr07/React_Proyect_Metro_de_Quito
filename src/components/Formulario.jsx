@@ -1,9 +1,9 @@
 import { v4 as uuidv4} from "uuid"
 import Mensajes from "./Mensajes"
 import { useState } from "react"
+import { useEffect } from 'react'
 
-
-export const Formulario = ({setEstado, estado}) => {
+export const Formulario = ({setEstado,idMetro}) => {
 
     // Usestate va antes del return
     const [error, setError] = useState(false)
@@ -19,6 +19,30 @@ export const Formulario = ({setEstado, estado}) => {
         detalles:""
     })
 
+    useEffect(() => {
+        if(idMetro)
+        {
+            (async function (idMetro) {
+                try {
+                    const respuesta = await (await fetch(`http://localhost:3000/metro/${idMetro}`)).json()
+                    const {id,nombre,sector,salida,llegada,maquinista,detalles} = respuesta
+                    setform({
+                        ...form,
+                        nombre,
+                        sector,
+                        salida,
+                        llegada,
+                        maquinista,
+                        detalles,
+                                                id
+                    })
+                }
+                catch (error) {
+                    console.log(error);
+                }
+            })(idMetro)
+        }
+    }, [idMetro])
     
     const handleChange = (e) => { 
         setform({
@@ -27,11 +51,9 @@ export const Formulario = ({setEstado, estado}) => {
         })
     }
 
-    const handleSubmit = async(e)=>{
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        // Validación de campos vacios
-        if (Object.values(form).includes("") || Object.entries(form).length === 0)
-        {
+        if (Object.values(form).includes("") || Object.entries(form).length === 0) {
             setError(true)
             setTimeout(() => {
                 setError(false)
@@ -39,24 +61,42 @@ export const Formulario = ({setEstado, estado}) => {
             return
         }
         try {
-            const url ="http://localhost:3000/metro"
-						form.id = uuidv4()
-            await fetch(url,{
-                method:'POST',
-                body:JSON.stringify(form),
-                headers:{'Content-Type':'application/json'}
-            })
-            setMensaje(true)
-						setEstado(true)
-            setTimeout(() => {
-                setMensaje(false)
-								setEstado(false)
+            // Actualización de las rutas
+            if(form.id){
+                const url = `http://localhost:3000/metro/${form.id}`
+                await fetch(url,{
+                    method:'PUT',
+                    body:JSON.stringify(form),
+                    headers:{'Content-Type':'application/json'}
+                })
+                setEstado(true)
                 setform({})
-            }, 1000);
+								setTimeout(() => {
+                    setEstado(false)
+                    setform({})
+                }, 1000)
+            }
+            // Creacion de las rutas
+            else{
+                const url = "http://localhost:3000/metro"
+								form.id = uuidv4()
+                await fetch(url, {
+                    method: 'POST',
+                    body: JSON.stringify(form),
+                    headers: { 'Content-Type': 'application/json' }
+                })
+                setMensaje(true)
+                setEstado(true)
+                setTimeout(() => {
+                    setMensaje(false)
+                    setEstado(false)
+                    setform({})
+                }, 1000);
+
+            }
         } catch (error) {
             console.log(error);
         }
-
     }
 
     return (
@@ -157,7 +197,7 @@ export const Formulario = ({setEstado, estado}) => {
                 className='bg-sky-900 w-full p-3 
         text-white uppercase font-bold rounded-lg 
         hover:bg-red-900 cursor-pointer transition-all'
-                value='Registrar ruta' />
+        value={form.id ? "Actualizar ruta" : "Registrar ruta"} />
 
         </form>
     )
